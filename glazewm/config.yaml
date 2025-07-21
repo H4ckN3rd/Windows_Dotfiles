@@ -49,9 +49,9 @@ gaps:
   # Gap between windows and the screen edge.
   outer_gap:
     top: "3px"
-    right: "5px"
+    right: "8px"
     bottom: "5px"
-    left: "5px"
+    left: "8px"
 
 window_effects:
   # Visual effects to apply to the focused window.
