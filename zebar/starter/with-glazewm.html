@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Custom styles. -->
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, {
+        useState,
+        useEffect,
+      } from 'https://esm.sh/react@18?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@2';
+
+      const providers = zebar.createProviderGroup({
+        network: { type: 'network' },
+        glazewm: { type: 'glazewm' },
+        cpu: { type: 'cpu' },
+        date: { type: 'date', formatting: 'EEE, d MMM | HH:mm' },
+        battery: { type: 'battery' },
+        memory: { type: 'memory' },
+        media: { type: 'media' },
+      });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      function App() {
+        const [output, setOutput] = useState(providers.outputMap);
+
+        useEffect(() => {
+          providers.onOutput(() => setOutput(providers.outputMap));
+        }, []);
+
+        // Get icon to show for current network status.
+        function getNetworkIcon(networkOutput) {
+          switch (networkOutput.defaultInterface?.type) {
+            case 'ethernet':
+              return <i className="nf nf-md-ethernet_cable"></i>;
+            case 'wifi':
+              if (networkOutput.defaultGateway?.signalStrength >= 80) {
+                return <i className="nf nf-md-wifi_strength_4"></i>;
+              } else if (
+                networkOutput.defaultGateway?.signalStrength >= 65
+              ) {
+                return <i className="nf nf-md-wifi_strength_3"></i>;
+              } else if (
+                networkOutput.defaultGateway?.signalStrength >= 40
+              ) {
+                return <i className="nf nf-md-wifi_strength_2"></i>;
+              } else if (
+                networkOutput.defaultGateway?.signalStrength >= 25
+              ) {
+                return <i className="nf nf-md-wifi_strength_1"></i>;
+              } else {
+                return <i className="nf nf-md-wifi_strength_outline"></i>;
+              }
+            default:
+              return (
+                <i className="nf nf-md-wifi_strength_off_outline"></i>
+              );
+          }
+        }
+
+        // Get icon to show for how much of the battery is charged.
+        function getBatteryIcon(batteryOutput) {
+          if (batteryOutput.chargePercent > 90)
+            return <i className="nf nf-fa-battery_4"></i>;
+          if (batteryOutput.chargePercent > 70)
+            return <i className="nf nf-fa-battery_3"></i>;
+          if (batteryOutput.chargePercent > 40)
+            return <i className="nf nf-fa-battery_2"></i>;
+          if (batteryOutput.chargePercent > 20)
+            return <i className="nf nf-fa-battery_1"></i>;
+          return <i className="nf nf-fa-battery_0"></i>;
+        }
+
+        // Truncate long text for music display
+        function truncateText(text, maxLength = 25) {
+          if (!text) return '';
+          return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        return (
+          <div className="bar">
+            <div className="left-section">
+              <div className="island">
+                <div className="menu-button">
+                  <i className="nf nf-dev-windows"></i>
+                </div>
+                {output.glazewm && (
+                  <div className="workspaces">
+                    {output.glazewm.currentWorkspaces.map(workspace => (
+                      <div
+                        className={`workspace ${workspace.hasFocus ? 'active' : ''} ${workspace.isDisplayed ? 'occupied' : ''}`}
+                        onClick={() =>
+                          output.glazewm.runCommand(
+                            `focus --workspace ${workspace.name}`,
+                          )
+                        }
+                        key={workspace.name}
+                      >
+                        {workspace.displayName ?? workspace.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {output.glazewm && (
+                <div className="island">
+                  <div className="window-controls">
+                    {output.glazewm.isPaused && (
+                      <div
+                        className="control-button paused"
+                        onClick={() => output.glazewm.runCommand('wm-toggle-pause')}
+                      >
+                        <i className="nf nf-fa-pause"></i>
+                      </div>
+                    )}
+                    <div
+                      className="control-button tiling"
+                      onClick={() =>
+                        output.glazewm.runCommand('toggle-tiling-direction')
+                      }
+                    >
+                      <i className={`nf ${output.glazewm.tilingDirection === 'horizontal' ? 'nf-md-swap_horizontal' : 'nf-md-swap_vertical'}`}></i>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="center-section">
+              <div className="island">
+                {output.media && output.media.currentSession && (
+                  <>
+                    <div className="music-player">
+                      <div className="music-info">
+                        <span className="song-details">{truncateText(output.media.currentSession.title)} | {truncateText(output.media.currentSession.artist, 20)}</span>
+                      </div>
+                    </div>
+                    <div className="separator"></div>
+                  </>
+                )}
+                <div className="datetime">
+                  {output.date?.formatted}
+                </div>
+              </div>
+            </div>
+
+            <div className="right-section">
+              <div className="island">
+                <div className="system-tray">
+                  {output.cpu && (
+                    <div className="tray-item cpu-item">
+                      <i className="nf nf-oct-cpu"></i>
+                      <span className={output.cpu.usage > 85 ? 'high-usage' : ''}>
+                        {Math.round(output.cpu.usage)}%
+                      </span>
+                    </div>
+                  )}
+
+                  {output.memory && (
+                    <div className="tray-item memory-item">
+                      <i className="nf nf-fae-chip"></i>
+                      <span>{Math.round(output.memory.usage)}%</span>
+                    </div>
+                  )}
+
+                  {output.network && (
+                    <div className="tray-item network-item">
+                      {getNetworkIcon(output.network)}
+                      <span>{output.network.defaultGateway?.ssid || 'Ethernet'}</span>
+                    </div>
+                  )}
+
+                  {output.battery && (
+                    <div className="tray-item battery-item">
+                      {output.battery.isCharging && (
+                        <i className="nf nf-md-power_plug charging-icon"></i>
+                      )}
+                      {getBatteryIcon(output.battery)}
+                      <span>{Math.round(output.battery.chargePercent)}%</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    </script>
+  </body>
+</html>

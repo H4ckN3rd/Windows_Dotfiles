@@ -1,0 +1,339 @@
+@import url('https://www.nerdfonts.com/assets/css/webfont.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --gruvbox-bg0: #1d2021;
+  --gruvbox-bg1: #282828;
+  --gruvbox-bg2: #32302f;
+  --gruvbox-bg3: #3c3836;
+  --gruvbox-bg4: #504945;
+  --gruvbox-fg0: #fbf1c7;
+  --gruvbox-fg1: #ebdbb2;
+  --gruvbox-fg2: #d5c4a1;
+  --gruvbox-fg3: #bdae93;
+  --gruvbox-fg4: #a89984;
+  --gruvbox-red: #cc241d;
+  --gruvbox-green: #98971a;
+  --gruvbox-yellow: #d79921;
+  --gruvbox-blue: #458588;
+  --gruvbox-purple: #b16286;
+  --gruvbox-aqua: #689d6a;
+  --gruvbox-orange: #d65d0e;
+  --gruvbox-bright-red: #fb4934;
+  --gruvbox-bright-green: #b8bb26;
+  --gruvbox-bright-yellow: #fabd2f;
+  --gruvbox-bright-blue: #83a598;
+  --gruvbox-bright-purple: #d3869b;
+  --gruvbox-bright-aqua: #8ec07c;
+  --gruvbox-bright-orange: #fe8019;
+  --bar-height: 32px;
+  --gap-between-bar-and-content: 5px;
+  --element-height: 28px;
+  --element-padding-y: 2px;
+  --element-padding-x: 8px;
+  --element-radius: 6px;
+  --font-size-base: 12px;
+  --font-size-small: 10px;
+}
+
+* {
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+body {
+  margin: 0;
+  padding-top: calc(var(--bar-height) + var(--gap-between-bar-and-content));
+  color: var(--gruvbox-fg1);
+  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  background: transparent;
+  overflow: hidden;
+}
+
+#root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--bar-height);
+  background: transparent;
+  z-index: 9999;
+}
+
+.main-content {
+  position: absolute;
+  top: calc(var(--bar-height) + var(--gap-between-bar-and-content));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gruvbox-bg0);
+  overflow: auto;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 10px;
+  gap: 8px;
+}
+
+.left-section,
+.center-section,
+.right-section {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 8px;
+}
+
+.left-section {
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.center-section {
+  flex: 1;
+  justify-content: center;
+}
+
+.right-section {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.island {
+  background: var(--gruvbox-bg2);
+  border: 1px solid var(--gruvbox-bg4);
+  border-radius: 8px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  height: var(--element-height);
+}
+
+.menu-button,
+.workspace,
+.control-button,
+.datetime,
+.music-player,
+.tray-item {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: var(--element-padding-y) var(--element-padding-x);
+  border-radius: var(--element-radius);
+  line-height: 1;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: all 0.2s ease;
+}
+
+.menu-button:hover,
+.workspace:hover,
+.control-button:hover,
+.datetime:hover,
+.tray-item:hover {
+  background: var(--gruvbox-bg3);
+}
+
+.menu-button:active,
+.workspace:active,
+.control-button:active,
+.datetime:active,
+.tray-item:active {
+  background: var(--gruvbox-bg4);
+}
+
+.menu-button {
+  width: 32px;
+  cursor: pointer;
+}
+
+.menu-button i {
+  color: var(--gruvbox-bright-orange);
+  font-size: 16px;
+}
+
+.workspaces,
+.window-controls,
+.system-tray {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+
+.workspace {
+  min-width: 22px;
+  min-height: 20px;
+  color: var(--gruvbox-fg3);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  position: relative;
+  cursor: pointer;
+}
+
+.workspace.occupied {
+  background: var(--gruvbox-bg2);
+  color: var(--gruvbox-fg2);
+}
+
+.workspace.active {
+  background: var(--gruvbox-bright-aqua);
+  color: var(--gruvbox-bg0);
+  font-weight: 600;
+}
+
+.control-button {
+  width: 24px;
+  color: var(--gruvbox-fg2);
+  justify-content: center;
+  cursor: pointer;
+}
+
+.control-button.paused {
+  background: var(--gruvbox-bright-red);
+  color: var(--gruvbox-fg0);
+}
+
+.control-button i {
+  font-size: 12px;
+}
+
+.music-player {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 200px;
+  max-width: 200px;
+  overflow: hidden;
+}
+
+.music-player .icon {
+  font-size: 16px;
+  color: var(--gruvbox-bright-yellow);
+}
+
+.music-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.song-details {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-text 10s linear infinite;
+}
+
+@keyframes scroll-text {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.music-player:empty {
+  display: none;
+}
+
+.datetime {
+  color: var(--gruvbox-bright-yellow);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.separator {
+  width: 1px;
+  height: 16px;
+  background-color: var(--gruvbox-bg4);
+  margin: 0 4px;
+}
+
+.tray-item {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.tray-item i {
+  font-size: 12px;
+}
+
+.tray-item span {
+  color: var(--gruvbox-fg2) !important;
+  font-size: 11px;
+}
+
+.cpu-item i { color: var(--gruvbox-bright-green); }
+.memory-item i { color: var(--gruvbox-bright-purple); }
+.network-item i { color: var(--gruvbox-bright-blue); }
+.battery-item i { color: var(--gruvbox-bright-yellow); }
+.weather-item i { color: var(--gruvbox-bright-orange); }
+
+.cpu-item span { color: var(--gruvbox-bright-green) !important; }
+.memory-item span { color: var(--gruvbox-bright-purple) !important; }
+.network-item span { color: var(--gruvbox-bright-blue) !important; }
+.battery-item span { color: var(--gruvbox-bright-yellow) !important; }
+.weather-item span { color: var(--gruvbox-bright-orange) !important; }
+
+.high-usage {
+  color: var(--gruvbox-bright-red) !important;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.battery-item {
+  position: relative;
+}
+
+.charging-icon {
+  position: absolute;
+  font-size: 10px;
+  left: 1px;
+  top: 0px;
+  color: var(--gruvbox-bright-green) !important;
+  animation: pulse 1.5s infinite;
+  text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
+}
+
+@media (max-width: 1366px) {
+  .bar { padding: 0 8px; }
+  .system-tray { gap: 6px; }
+  .tray-item { padding: 3px 6px; }
+  .music-player { max-width: 250px; }
+}
+
+@media (max-width: 1024px) {
+  body { font-size: 11px; }
+  .workspace { min-width: 24px; height: 18px; font-size: 11px; }
+  .music-player { max-width: 200px; }
+  .song-title { font-size: 11px; }
+  .song-artist { font-size: 9px; }
+  .datetime { font-size: 12px; padding: 3px 10px; }
+  .tray-item { padding: 2px 6px; }
+  .tray-item span { font-size: 10px; }
+}
+
+@media (max-width: 768px) {
+  .center-section { gap: 12px; }
+  .music-player { max-width: 150px; }
+  .system-tray { gap: 4px; }
+  .tray-item span { display: none; }
+  .tray-item { padding: 4px; min-width: 24px; justify-content: center; }
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--gruvbox-bg1); }
+::-webkit-scrollbar-thumb { background: var(--gruvbox-bg3); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gruvbox-bg4); }
