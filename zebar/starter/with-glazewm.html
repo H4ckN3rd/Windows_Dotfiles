@@ -26,8 +26,8 @@
       import * as zebar from 'https://esm.sh/zebar@2';
 
       const providers = zebar.createProviderGroup({
-        network: { type: 'network' },
-        glazewm: { type: 'glazewm' },
+        network: { type: 'network', payload: ['defaultInterface', 'defaultGateway', 'traffic'] },
+        glazewm: { type: 'glazewm', payload: ['runningApplications', 'currentWorkspaces', 'isPaused', 'tilingDirection'] },
         cpu: { type: 'cpu' },
         date: { type: 'date', formatting: 'EEE, d MMM | HH:mm' },
         battery: { type: 'battery' },
@@ -180,10 +180,28 @@
                   )}
 
                   {output.network && (
-                    <div className="tray-item network-item">
-                      {getNetworkIcon(output.network)}
-                      <span>{output.network.defaultGateway?.ssid || 'Ethernet'}</span>
-                    </div>
+                    <>
+                      <div className="tray-item network-ssid-item">
+                        {getNetworkIcon(output.network)}
+                        <span>{output.network.defaultGateway?.ssid || 'Ethernet'}</span>
+                      </div>
+                      {(output.network.traffic?.transmitted?.bytes !== undefined || output.network.traffic?.received?.bytes !== undefined) && (
+                        <div className="tray-item network-speed-item">
+                          {output.network.traffic?.transmitted?.bytes !== undefined && (
+                            <span className="network-speed">
+                              <i className="nf nf-md-arrow_up"></i>
+                              {(output.network.traffic.transmitted.bytes / 1000000).toFixed(1)}
+                            </span>
+                          )}
+                          {output.network.traffic?.received?.bytes !== undefined && (
+                            <span className="network-speed">
+                              <i className="nf nf-md-arrow_down"></i>
+                              {(output.network.traffic.received.bytes / 1000000).toFixed(1)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
 
                   {output.battery && (
@@ -196,6 +214,15 @@
                     </div>
                   )}
                 </div>
+                {output.glazewm && output.glazewm.runningApplications && (
+                  <div className="running-apps">
+                    {output.glazewm.runningApplications.map((app, index) => (
+                      <span key={index} className="app-name">
+                        {app.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

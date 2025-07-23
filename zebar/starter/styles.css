@@ -278,9 +278,15 @@ body {
 
 .cpu-item span { color: var(--gruvbox-bright-green) !important; }
 .memory-item span { color: var(--gruvbox-bright-purple) !important; }
-.network-item span { color: var(--gruvbox-bright-blue) !important; }
+.network-speed-item span { color: var(--gruvbox-bright-blue) !important; }
 .battery-item span { color: var(--gruvbox-bright-yellow) !important; }
 .weather-item span { color: var(--gruvbox-bright-orange) !important; }
+
+.network-ssid-item span {
+  color: var(--gruvbox-bright-orange) !important;
+  font-size: 11px;
+}
+.network-ssid-item i { color: var(--gruvbox-bright-orange); }
 
 .high-usage {
   color: var(--gruvbox-bright-red) !important;
@@ -305,6 +311,18 @@ body {
   color: var(--gruvbox-bright-green) !important;
   animation: pulse 1.5s infinite;
   text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.7);
+}
+
+.network-speed {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--gruvbox-bright-blue) !important; /* Changed to bright blue */
+  font-size: 11px;
+}
+
+.network-speed i {
+  font-size: 10px;
 }
 
 @media (max-width: 1366px) {
