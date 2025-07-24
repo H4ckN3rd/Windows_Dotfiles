@@ -1,5 +1,5 @@
 @import url('https://www.nerdfonts.com/assets/css/webfont.css');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   --gruvbox-bg0: #1d2021;
@@ -45,7 +45,7 @@ body {
   margin: 0;
   padding-top: calc(var(--bar-height) + var(--gap-between-bar-and-content));
   color: var(--gruvbox-fg1);
-  font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'JetBrains Mono', 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, monospace;
   font-size: 13px;
   background: transparent;
   overflow: hidden;
@@ -206,13 +206,31 @@ body {
 }
 
 .music-player {
-  padding: 0px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 320px; /* Fixed width to prevent shifting */
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.music-controls {
   display: flex;
   align-items: center;
   gap: 6px;
-  width: 200px;
-  max-width: 200px;
-  overflow: hidden;
+}
+
+.music-controls i {
+  cursor: pointer;
+  font-size: 18px; /* Larger icons to accommodate circles */
+  color: var(--gruvbox-aqua);
+  padding: 0 5px;
+  border-radius: 50%; /* Make the background circular */
+}
+
+.music-controls i:hover {
+  color: var(--gruvbox-bright-aqua);
+  background: var(--gruvbox-bg3);
 }
 
 .music-player .icon {

@@ -147,8 +147,19 @@
                 {output.media && output.media.currentSession && (
                   <>
                     <div className="music-player">
+                      <div className="music-controls">
+                        <i className="nf nf-md-skip_previous_circle_outline" onClick={() => output.media.previous()}></i>
+                        <i 
+                          className={`nf ${output.media.currentSession.isPlaying ? 'nf-md-pause_circle_outline' : 'nf-md-play_circle_outline'}`} 
+                          onClick={() => output.media.togglePlayPause()}
+                        ></i>
+                        <i className="nf nf-md-skip_next_circle_outline" onClick={() => output.media.next()}></i>
+                      </div>
                       <div className="music-info">
-                        <span className="song-details">{truncateText(output.media.currentSession.title)} | {truncateText(output.media.currentSession.artist, 20)}</span>
+                        <span className="song-details">
+                          {truncateText(output.media.currentSession.title)}
+                          {output.media.currentSession.artist && ` | ${truncateText(output.media.currentSession.artist, 20)}`}
+                        </span>
                       </div>
                     </div>
                     <div className="separator"></div>
