@@ -120,7 +120,6 @@ body {
 .workspace,
 .control-button,
 .datetime,
-.music-player,
 .tray-item {
   display: flex;
   align-items: center;
@@ -207,6 +206,7 @@ body {
 }
 
 .music-player {
+  padding: 0px 6px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -224,17 +224,20 @@ body {
   flex: 1;
   min-width: 0;
   overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .song-details {
   display: inline-block;
   white-space: nowrap;
   animation: scroll-text 10s linear infinite;
+  animation-delay: 2s; /* Start scrolling after a delay */
+  will-change: transform;
 }
 
 @keyframes scroll-text {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
 }
 
 .music-player:empty {
