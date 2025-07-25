@@ -27,7 +27,7 @@
 
       const providers = zebar.createProviderGroup({
         network: { type: 'network', payload: ['defaultInterface', 'defaultGateway', 'traffic'] },
-        glazewm: { type: 'glazewm', payload: ['runningApplications', 'currentWorkspaces', 'isPaused', 'tilingDirection', 'focusedContainer'] },
+        glazewm: { type: 'glazewm', payload: ['runningApplications', 'currentWorkspaces', 'isPaused', 'tilingDirection'] },
         cpu: { type: 'cpu' },
         date: { type: 'date', formatting: 'EEE, d MMM | HH:mm' },
         battery: { type: 'battery' },
@@ -93,26 +93,6 @@
           return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
         }
 
-        // Get focused app info
-        function getFocusedApp() {
-          if (!output.glazewm?.focusedContainer) return null;
-          
-          const container = output.glazewm.focusedContainer;
-          const appName = container.processName || container.title;
-
-          // Disappear if no app or generic name
-          if (!appName || appName.toLowerCase() === 'unknown app') {
-            return null;
-          }
-
-          return {
-            name: appName,
-            title: container.title || ''
-          };
-        }
-
-        const focusedApp = getFocusedApp();
-
         return (
           <div className="bar">
             <div className="left-section">
@@ -138,7 +118,6 @@
                   </div>
                 )}
               </div>
-
               {output.glazewm && (
                 <div className="island">
                   <div className="window-controls">
@@ -193,15 +172,6 @@
             </div>
 
             <div className="right-section">
-              {focusedApp && (
-                <div className="focused-app-island">
-                  <div className="focused-app">
-                    <span className="focused-app-name">
-                      {focusedApp.name}
-                    </span>
-                  </div>
-                </div>
-              )}
               <div className="island">
                 <div className="system-tray">
                   {output.cpu && (

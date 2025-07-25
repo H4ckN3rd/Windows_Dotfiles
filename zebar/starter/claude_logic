@@ -13,6 +13,52 @@
       integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
       crossorigin="anonymous"
     ></script>
+
+    <style>
+      /* Additional styles for the focused app island */
+      .focused-app-island {
+        background: var(--gruvbox-bg2);
+        border: 1px solid var(--gruvbox-bg4);
+        border-radius: 8px;
+        padding: 2px 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        height: var(--element-height);
+        min-width: 150px;
+        max-width: 250px;
+      }
+
+      .focused-app {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--gruvbox-fg1);
+        font-size: 12px;
+        font-weight: 500;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .focused-app-icon {
+        color: var(--gruvbox-bright-blue);
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      .focused-app-name {
+        color: var(--gruvbox-fg2);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .no-focused-app {
+        color: var(--gruvbox-fg4);
+        font-style: italic;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
@@ -98,17 +144,31 @@
           if (!output.glazewm?.focusedContainer) return null;
           
           const container = output.glazewm.focusedContainer;
-          const appName = container.processName || container.title;
-
-          // Disappear if no app or generic name
-          if (!appName || appName.toLowerCase() === 'unknown app') {
-            return null;
-          }
-
           return {
-            name: appName,
+            name: container.processName || container.title || 'Unknown App',
             title: container.title || ''
           };
+        }
+
+        // Get appropriate icon for focused app
+        function getFocusedAppIcon(appName) {
+          const name = appName?.toLowerCase() || '';
+          
+          if (name.includes('chrome') || name.includes('browser')) {
+            return <i className="nf nf-md-web"></i>;
+          } else if (name.includes('code') || name.includes('vscode')) {
+            return <i className="nf nf-dev-visualstudio"></i>;
+          } else if (name.includes('terminal') || name.includes('cmd') || name.includes('powershell')) {
+            return <i className="nf nf-dev-terminal"></i>;
+          } else if (name.includes('explorer') || name.includes('file')) {
+            return <i className="nf nf-md-folder"></i>;
+          } else if (name.includes('notepad') || name.includes('text')) {
+            return <i className="nf nf-md-text_box"></i>;
+          } else if (name.includes('music') || name.includes('spotify') || name.includes('media')) {
+            return <i className="nf nf-md-music"></i>;
+          } else {
+            return <i className="nf nf-md-application"></i>;
+          }
         }
 
         const focusedApp = getFocusedApp();
@@ -137,6 +197,24 @@
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* NEW FOCUSED APP ISLAND */}
+              <div className="focused-app-island">
+                <div className="focused-app">
+                  {focusedApp ? (
+                    <>
+                      <span className="focused-app-icon">
+                        {getFocusedAppIcon(focusedApp.name)}
+                      </span>
+                      <span className="focused-app-name">
+                        {focusedApp.name}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="no-focused-app">No app focused</span>
+                  )}
+                </div>
               </div>
 
               {output.glazewm && (
@@ -193,15 +271,6 @@
             </div>
 
             <div className="right-section">
-              {focusedApp && (
-                <div className="focused-app-island">
-                  <div className="focused-app">
-                    <span className="focused-app-name">
-                      {focusedApp.name}
-                    </span>
-                  </div>
-                </div>
-              )}
               <div className="island">
                 <div className="system-tray">
                   {output.cpu && (

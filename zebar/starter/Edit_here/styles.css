@@ -102,7 +102,6 @@ body {
 .right-section {
   flex: 1;
   justify-content: flex-end;
-  gap: 16px;
 }
 
 .island {
@@ -377,40 +376,3 @@ body {
 ::-webkit-scrollbar-track { background: var(--gruvbox-bg1); }
 ::-webkit-scrollbar-thumb { background: var(--gruvbox-bg3); border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--gruvbox-bg4); }
-
-/* Additional styles for the focused app island */
-.focused-app-island {
-  background: var(--gruvbox-bg2);
-  border: 1px solid var(--gruvbox-bg4);
-  border-radius: 8px;
-  padding: 2px 8px;
-  display: flex;
-  align-items: center;
-  gap: 0px; /* No gap needed without icon */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  height: var(--element-height);
-  /* Removed min-width and max-width for dynamic sizing */
-}
-
-.focused-app {
-  display: flex;
-  align-items: center;
-  gap: 0px; /* No gap needed without icon */
-  color: var(--gruvbox-fg1);
-  font-size: 12px;
-  font-weight: 500;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.focused-app-name {
-  color: var(--gruvbox-bright-blue); /* Changed text color */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.no-focused-app {
-  color: var(--gruvbox-fg4);
-  font-style: italic;
-}
