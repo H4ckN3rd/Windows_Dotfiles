@@ -61,6 +61,16 @@ body {
   z-index: 9999;
 }
 
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 10px;
+  gap: 8px;
+  background: transparent; /* Ensure the bar itself is transparent */
+}
+
 .main-content {
   position: absolute;
   top: calc(var(--bar-height) + var(--gap-between-bar-and-content));
@@ -106,8 +116,9 @@ body {
 }
 
 .island {
-  background: var(--gruvbox-bg2);
-  border: 1px solid var(--gruvbox-bg4);
+  background: rgba(40, 40, 40, 0.95); /* Increased opacity for acrylic look (95% opaque) */
+  backdrop-filter: blur(2px); /* Very subtle blur effect */
+  border: 1px solid rgba(60, 56, 54, 0.7); /* Slightly more opaque border */
   border-radius: 8px;
   padding: 2px;
   display: flex;
@@ -380,8 +391,9 @@ body {
 
 /* Additional styles for the focused app island */
 .focused-app-island {
-  background: var(--gruvbox-bg2);
-  border: 1px solid var(--gruvbox-bg4);
+  background: rgba(40, 40, 40, 0.95); /* Increased opacity for acrylic look (95% opaque) */
+  backdrop-filter: blur(2px); /* Very subtle blur effect */
+  border: 1px solid rgba(60, 56, 54, 0.7); /* Slightly more opaque border */
   border-radius: 8px;
   padding: 2px 8px;
   display: flex;
