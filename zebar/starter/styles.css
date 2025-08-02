@@ -352,6 +352,9 @@ body {
   gap: 2px;
   color: var(--gruvbox-bright-blue) !important; /* Changed to bright blue */
   font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .network-speed i {
@@ -407,12 +410,17 @@ body {
 .focused-app {
   display: flex;
   align-items: center;
-  gap: 0px; /* No gap needed without icon */
+  gap: 4px; /* Add a small gap between icon and text */
   color: var(--gruvbox-fg1);
   font-size: 12px;
   font-weight: 500;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.focused-app .app-icon {
+  font-size: 14px; /* Slightly larger icon */
+  color: var(--gruvbox-bright-blue); /* Match text color */
 }
 
 .focused-app-name {
@@ -425,4 +433,10 @@ body {
 .no-focused-app {
   color: var(--gruvbox-fg4);
   font-style: italic;
+}
+
+.network-total-usage {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

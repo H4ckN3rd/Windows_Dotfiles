@@ -115,6 +115,56 @@
           return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
         }
 
+        // Get icon for focused app
+        function getAppIconClass(appName) {
+          const lowerAppName = appName.toLowerCase();
+          if (lowerAppName.includes('7-zip')) return 'nf nf-fa-folder_zip';
+          if (lowerAppName.includes('git')) return 'nf nf-dev-git';
+          if (lowerAppName.includes('office')) return 'nf nf-fa-file_word_o';
+          if (lowerAppName.includes('firefox')) return 'nf nf-fa-firefox';
+          if (lowerAppName.includes('notepad++')) return 'nf nf-dev-notepad_plus_plus';
+          if (lowerAppName.includes('onedrive')) return 'nf nf-md-microsoft_onedrive';
+          if (lowerAppName.includes('proton vpn')) return 'nf nf-md-vpn';
+          if (lowerAppName.includes('winrar')) return 'nf nf-fa-folder_zip';
+          if (lowerAppName.includes('virtualbox')) return 'nf nf-dev-virtualbox';
+          if (lowerAppName.includes('google drive')) return 'nf nf-md-google_drive';
+          if (lowerAppName.includes('glazewm')) return 'nf nf-dev-windows';
+          if (lowerAppName.includes('node.js')) return 'nf nf-dev-nodejs';
+          if (lowerAppName.includes('powertoys')) return 'nf nf-md-tools';
+          if (lowerAppName.includes('go programming language')) return 'nf nf-dev-go';
+          if (lowerAppName.includes('quick share')) return 'nf nf-md-share_variant';
+          if (lowerAppName.includes('cloudflare warp')) return 'nf nf-md-cloud';
+          if (lowerAppName.includes('wireshark')) return 'nf nf-md-network_outline';
+          if (lowerAppName.includes('youtube music')) return 'nf nf-md-music';
+          if (lowerAppName.includes('notion')) return 'nf nf-md-note_multiple';
+          if (lowerAppName.includes('youtube')) return 'nf nf-fa-youtube_play';
+          if (lowerAppName.includes('neohtop')) return 'nf nf-oct-cpu';
+          if (lowerAppName.includes('perplexity')) return 'nf nf-md-lightbulb_on_outline';
+          if (lowerAppName.includes('mynoise')) return 'nf nf-md-volume_high';
+          if (lowerAppName.includes('fastfetch')) return 'nf nf-oct-terminal';
+          if (lowerAppName.includes('gnu nano')) return 'nf nf-fa-file_text_o';
+          if (lowerAppName.includes('proton pass')) return 'nf nf-md-lock';
+          if (lowerAppName.includes('stremio')) return 'nf nf-md-movie';
+          if (lowerAppName.includes('obsidian')) return 'nf nf-md-note_multiple';
+          if (lowerAppName.includes('code')) return 'nf nf-dev-visualstudio';
+          if (lowerAppName.includes('chrome') || lowerAppName.includes('edge')  || lowerAppName.includes('brave') || lowerAppName.includes('firefox')) return 'nf nf-fa-globe';
+          if (lowerAppName.includes('terminal') || lowerAppName.includes('cmd') || lowerAppName.includes('powershell')) return 'nf nf-fa-terminal';
+          if (lowerAppName.includes('explorer')) return 'nf nf-fa-folder_open';
+          if (lowerAppName.includes('spotify')) return 'nf nf-fa-spotify';
+          if (lowerAppName.includes('discord')) return 'nf nf-md-discord';
+          if (lowerAppName.includes('steam')) return 'nf nf-fa-steam';
+          if (lowerAppName.includes('calculator')) return 'nf nf-md-calculator';
+          if (lowerAppName.includes('settings')) return 'nf nf-md-cog';
+          if (lowerAppName.includes('paint')) return 'nf nf-md-brush';
+          if (lowerAppName.includes('notepad++')) return 'nf nf-fa-file_text_o';
+          if (lowerAppName.includes('word') || lowerAppName.includes('excel') || lowerAppName.includes('powerpoint')) return 'nf nf-fa-file_word_o';
+          if (lowerAppName.includes('outlook')) return 'nf nf-md-email';
+          if (lowerAppName.includes('vlc')) return 'nf nf-fa-vlc';
+          if (lowerAppName.includes('obs')) return 'nf nf-fa-video_camera';
+          if (lowerAppName.includes('zoom') || lowerAppName.includes('teams')) return 'nf nf-md-video';
+          return 'nf nf-fa-window_maximize'; // Default icon
+        }
+
         // Get focused app info
         function getFocusedApp() {
           if (!output.glazewm?.focusedContainer) return null;
@@ -129,7 +179,8 @@
 
           return {
             name: appName,
-            title: container.title || ''
+            title: container.title || '',
+            iconClass: getAppIconClass(appName)
           };
         }
 
@@ -218,6 +269,7 @@
               {focusedApp && (
                 <div className="focused-app-island">
                   <div className="focused-app">
+                    <i className={`app-icon ${focusedApp.iconClass}`}></i>
                     <span className="focused-app-name">
                       {focusedApp.name}
                     </span>
