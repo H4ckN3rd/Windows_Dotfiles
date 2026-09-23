@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Custom styles. -->
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+
+    <!-- Allows React to be run buildless via "text/babel" script below. -->
+    <script
+      src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"
+      integrity="sha256-aS0B0wnsaDByLfE16h4MDCP1fQFccysd1YWOcV+gbBo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+      import React, {
+        useState,
+        useEffect,
+      } from 'https://esm.sh/react@18?dev';
+      import { createRoot } from 'https://esm.sh/react-dom@18/client?dev';
+      import * as zebar from 'https://esm.sh/zebar@2';
+
+      const providers = zebar.createProviderGroup({
+        network: { type: 'network', payload: ['defaultInterface', 'defaultGateway', 'traffic'] },
+        glazewm: { type: 'glazewm', payload: ['runningApplications', 'currentWorkspaces', 'isPaused', 'tilingDirection', 'focusedContainer'] },
+        cpu: { type: 'cpu' },
+        date: { type: 'date', formatting: 'EEE, d MMM | HH:mm' },
+        battery: { type: 'battery', refreshInterval: 2000 },
+        memory: { type: 'memory' },
+        media: { type: 'media' },
+      });
+
+      createRoot(document.getElementById('root')).render(<App />);
+
+      function BatteryDisplay({ batteryOutput }) {
+        const [showPowerConsumption, setShowPowerConsumption] = useState(false);
+
+        const toggleDisplay = () => {
+          setShowPowerConsumption(prev => !prev);
+        };
+
+        // Get icon to show for how much of the battery is charged.
+        function getBatteryIcon(batteryOutput) {
+          if (batteryOutput.chargePercent > 90)
+            return <i className="nf nf-fa-battery_4"></i>;
+          if (batteryOutput.chargePercent > 70)
+            return <i className="nf nf-fa-battery_3"></i>;
+          if (batteryOutput.chargePercent > 40)
+            return <i className="nf nf-fa-battery_2"></i>;
+          if (batteryOutput.chargePercent > 20)
+            return <i className="nf nf-fa-battery_1"></i>;
+          return <i className="nf nf-fa-battery_0"></i>;
+        }
+
+        return (
+          <div className="tray-item battery-item" onClick={toggleDisplay}>
+            {batteryOutput.isCharging && (
+              <i className="nf nf-md-power_plug charging-icon"></i>
+            )}
+            {getBatteryIcon(batteryOutput)}
+            <span>
+              {showPowerConsumption && batteryOutput?.powerConsumption !== undefined
+                ? `${batteryOutput.powerConsumption.toFixed(1)}W`
+                : `${Math.round(batteryOutput.chargePercent)}%`}
+            </span>
+          </div>
+        );
+      }
+
+      function App() {
+        const [output, setOutput] = useState(providers.outputMap);
+
+        useEffect(() => {
+          providers.onOutput(() => setOutput(providers.outputMap));
+        }, []);
+
+        useEffect(() => {
+          if (!output.glazewm?.focusedContainer) return;
+    
+          // This logic is inspired by the user's example.
+          // The original example toggles direction if tilingSize <= 0.5.
+          // We don't have tilingSize, but we can replicate the "toggle on new window" behavior
+          // by running the command whenever the focused container changes.
+          // This will cause each new window to alternate the split direction.
+          output.glazewm.runCommand('toggle-tiling-direction');
+
+        }, [output.glazewm?.focusedContainer]);
+
+        // Get icon to show for current network status.
+        function getNetworkIcon(networkOutput) {
+          switch (networkOutput.defaultInterface?.type) {
+            case 'ethernet':
+              return (
+                <i className="nf nf-md-wifi_strength_off_outline"></i>
+              );
+          }
+        }
+
+        // Truncate long text for music display
+        function truncateText(text, maxLength = 25) {
+          if (!text) return '';
+          return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        // Get icon for focused app
+        function getAppIconClass(appName) {
+          const lowerAppName = appName.toLowerCase();
+          if (lowerAppName.includes('7-zip')) return 'nf nf-fa-folder_zip';
+          if (lowerAppName.includes('git')) return 'nf nf-dev-git';
+          if (lowerAppName.includes('office')) return 'nf nf-fa-file_word_o';
+          if (lowerAppName.includes('firefox')) return 'nf nf-fa-firefox';
+          if (lowerAppName.includes('notepad++')) return 'nf nf-dev-notepad_plus_plus';
+          if (lowerAppName.includes('onedrive')) return 'nf nf-md-microsoft_onedrive';
+          if (lowerAppName.includes('proton vpn')) return 'nf nf-md-vpn';
+          if (lowerAppName.includes('winrar')) return 'nf nf-fa-folder_zip';
+          if (lowerAppName.includes('virtualbox')) return 'nf nf-dev-virtualbox';
+          if (lowerAppName.includes('google drive')) return 'nf nf-md-google_drive';
+          if (lowerAppName.includes('glazewm')) return 'nf nf-dev-windows';
+          if (lowerAppName.includes('node.js')) return 'nf nf-dev-nodejs';
+          if (lowerAppName.includes('powertoys')) return 'nf nf-md-tools';
+          if (lowerAppName.includes('go programming language')) return 'nf nf-dev-go';
+          if (lowerAppName.includes('quick share')) return 'nf nf-md-share_variant';
+          if (lowerAppName.includes('cloudflare warp')) return 'nf nf-md-cloud';
+          if (lowerAppName.includes('wireshark')) return 'nf nf-md-network_outline';
+          if (lowerAppName.includes('youtube music')) return 'nf nf-md-music';
+          if (lowerAppName.includes('notion')) return 'nf nf-md-note_multiple';
+          if (lowerAppName.includes('youtube')) return 'nf nf-fa-youtube_play';
+          if (lowerAppName.includes('neohtop')) return 'nf nf-oct-cpu';
+          if (lowerAppName.includes('perplexity')) return 'nf nf-md-lightbulb_on_outline';
+          if (lowerAppName.includes('mynoise')) return 'nf nf-md-volume_high';
+          if (lowerAppName.includes('fastfetch')) return 'nf nf-oct-terminal';
+          if (lowerAppName.includes('gnu nano')) return 'nf nf-fa-file_text_o';
+          if (lowerAppName.includes('proton pass')) return 'nf nf-md-lock';
+          if (lowerAppName.includes('stremio')) return 'nf nf-md-movie';
+          if (lowerAppName.includes('obsidian')) return 'nf nf-md-note_multiple';
+          if (lowerAppName.includes('code')) return 'nf nf-dev-visualstudio';
+          if (lowerAppName.includes('chrome') || lowerAppName.includes('edge')  || lowerAppName.includes('brave') || lowerAppName.includes('firefox')) return 'nf nf-fa-globe';
+          if (lowerAppName.includes('terminal') || lowerAppName.includes('cmd') || lowerAppName.includes('powershell')) return 'nf nf-fa-terminal';
+          if (lowerAppName.includes('explorer')) return 'nf nf-fa-folder_open';
+          if (lowerAppName.includes('spotify')) return 'nf nf-fa-spotify';
+          if (lowerAppName.includes('discord')) return 'nf nf-md-discord';
+          if (lowerAppName.includes('steam')) return 'nf nf-fa-steam';
+          if (lowerAppName.includes('calculator')) return 'nf nf-md-calculator';
+          if (lowerAppName.includes('settings')) return 'nf nf-md-cog';
+          if (lowerAppName.includes('paint')) return 'nf nf-md-brush';
+          if (lowerAppName.includes('notepad++')) return 'nf nf-fa-file_text_o';
+          if (lowerAppName.includes('word') || lowerAppName.includes('excel') || lowerAppName.includes('powerpoint')) return 'nf nf-fa-file_word_o';
+          if (lowerAppName.includes('outlook')) return 'nf nf-md-email';
+          if (lowerAppName.includes('vlc')) return 'nf nf-fa-vlc';
+          if (lowerAppName.includes('obs')) return 'nf nf-fa-video_camera';
+          if (lowerAppName.includes('zoom') || lowerAppName.includes('teams')) return 'nf nf-md-video';
+          return 'nf nf-fa-window_maximize'; // Default icon
+        }
+
+        // Get focused app info
+        function getFocusedApp() {
+          if (!output.glazewm?.focusedContainer) return null;
+
+          const container = output.glazewm.focusedContainer;
+          const appName = container.processName || container.title;
+
+          // Disappear if no app or generic name
+          if (!appName || appName.toLowerCase() === 'unknown app') {
+            return null;
+          }
+
+          return {
+            name: appName,
+            title: container.title || '',
+            iconClass: getAppIconClass(appName)
+          };
+        }
+
+        const focusedApp = getFocusedApp();
+
+        return (
+          <div className="bar">
+            <div className="left-section">
+              <div className="island">
+                <div className="menu-button">
+                  <i className="nf nf-dev-windows"></i>
+                </div>
+                {output.glazewm && (
+                  <div className="workspaces">
+                    {output.glazewm.currentWorkspaces.map(workspace => (
+                      <div
+                        className={`workspace ${workspace.hasFocus ? 'active' : ''} ${workspace.isDisplayed ? 'occupied' : ''}`}
+                        onClick={() =>
+                          output.glazewm.runCommand(
+                            `focus --workspace ${workspace.name}`,
+                          )
+                        }
+                        key={workspace.name}
+                      >
+                        {workspace.displayName ?? workspace.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {output.glazewm && (
+                <div className="island">
+                  <div className="window-controls">
+                    {output.glazewm.isPaused && (
+                      <div
+                        className="control-button paused"
+                        onClick={() => output.glazewm.runCommand('wm-toggle-pause')}
+                      >
+                        <i className="nf nf-fa-pause"></i>
+                      </div>
+                    )}
+                    <div
+                      className="control-button tiling"
+                      onClick={() =>
+                        output.glazewm.runCommand('toggle-tiling-direction')
+                      }
+                    >
+                      <i className={`nf ${output.glazewm.tilingDirection === 'horizontal' ? 'nf-md-swap_horizontal' : 'nf-md-swap_vertical'}`}></i>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="center-section">
+              <div className="island">
+                {output.media && output.media.currentSession && (
+                  <>
+                    <div className="music-player">
+                      <div className="music-controls">
+                        <i className="nf nf-md-skip_previous_circle_outline" onClick={() => output.media.previous()}></i>
+                        <i
+                          className={`nf ${output.media.currentSession.isPlaying ? 'nf-md-pause_circle_outline' : 'nf-md-play_circle_outline'}`}
+                          onClick={() => output.media.togglePlayPause()}
+                        ></i>
+                        <i className="nf nf-md-skip_next_circle_outline" onClick={() => output.media.next()}></i>
+                      </div>
+                      <div className="music-info">
+                        <span className="song-details">
+                          {truncateText(output.media.currentSession.title)}
+                          {output.media.currentSession.artist && ` | ${truncateText(output.media.currentSession.artist, 20)}`}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="separator"></div>
+                  </>
+                )}
+                <div className="datetime">
+                  {output.date?.formatted}
+                </div>
+              </div>
+            </div>
+
+            <div className="right-section">
+              {focusedApp && (
+                <div className="focused-app-island">
+                  <div className="focused-app">
+                    <i className={`app-icon ${focusedApp.iconClass}`}></i>
+                    <span className="focused-app-name">
+                      {focusedApp.name}
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div className="island">
+                <div className="system-tray">
+                  {output.cpu && (
+                    <div className="tray-item cpu-item">
+                      <i className="nf nf-oct-cpu"></i>
+                      <span className={output.cpu.usage > 85 ? 'high-usage' : ''}>
+                        {Math.round(output.cpu.usage)}%
+                      </span>
+                    </div>
+                  )}
+
+                  {output.memory && (
+                    <div className="tray-item memory-item">
+                      <i className="nf nf-fae-chip"></i>
+                      <span>{Math.round(output.memory.usage)}%</span>
+                    </div>
+                  )}
+
+                  {output.network && (
+                    <NetworkDisplay networkOutput={output.network} />
+                  )}
+
+                  {output.battery && (
+                    <BatteryDisplay batteryOutput={output.battery} />
+                  )}
+                </div>
+                {output.glazewm && output.glazewm.runningApplications && (
+                  <div className="running-apps">
+                    {output.glazewm.runningApplications.map((app, index) => (
+                      <span key={index} className="app-name">
+                        {app.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function NetworkDisplay({ networkOutput }) {
+        const [showTotal, setShowTotal] = useState(false);
+
+        const toggleDisplay = () => {
+          setShowTotal(prev => !prev);
+        };
+
+        const totalReceived = networkOutput.traffic?.totalReceived?.bytes || 0;
+        const totalTransmitted = networkOutput.traffic?.totalTransmitted?.bytes || 0;
+        const totalBytes = (typeof totalReceived === 'number' && typeof totalTransmitted === 'number') ? totalReceived + totalTransmitted : 0;
+        const totalGB = (totalBytes / (1024 * 1024 * 1024)).toFixed(2);
+
+        return (
+          <>
+            {(networkOutput.traffic?.transmitted?.bytes !== undefined || networkOutput.traffic?.received?.bytes !== undefined) && (
+              <div className="tray-item network-speed-item" onClick={toggleDisplay}>
+                {showTotal ? (
+                  <span className="network-total-usage">{totalGB} GB</span>
+                ) : (
+                  <>
+                    {networkOutput.traffic?.transmitted?.bytes !== undefined && (
+                      <span className="network-speed">
+                        <i className="nf nf-md-arrow_up"></i>
+                        {(networkOutput.traffic.transmitted.bytes / 1000000).toFixed(1)}
+                      </span>
+                    )}
+                    {networkOutput.traffic?.received?.bytes !== undefined && (
+                      <span className="network-speed">
+                        <i className="nf nf-md-arrow_down"></i>
+                        {(networkOutput.traffic.received.bytes / 1000000).toFixed(1)}
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </>
+        );
+      }
+    </script>
+  </body>
+</html>
